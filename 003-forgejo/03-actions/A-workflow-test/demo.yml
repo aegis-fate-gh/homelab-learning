@@ -1,0 +1,8 @@
+name: Test Workflow
+on: [push]
+jobs:
+  test:
+    runs-on: debian # Replace with your actual runner label
+    steps:
+      - name: Echo test
+        run: echo "All good!"
