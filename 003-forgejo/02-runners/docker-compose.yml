@@ -39,9 +39,8 @@ configs:
             token: ADD_HERE
       runner:
         labels:
-          - ubuntu-latest:docker://node:18-bullseye
-          - debian-latest:docker://debian:bullseye-slim
           - debian:docker://docker.io/library/node:lts
+          - ubuntu-latest:docker://ubuntu:latest
 
 volumes:
   forgejo_runner_data:
