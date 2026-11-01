@@ -40,8 +40,9 @@ configs:
       runner:
         labels:
           - debian:docker://docker.io/library/node:lts
-          - ubuntu-latest:docker://ubuntu:latest
-
+          - ubuntu-latest:docker://node:20-bookworm
+          - ubuntu-22.04:docker://node:20-bookworm
+          - node20:docker://node:20-bookworm
 volumes:
   forgejo_runner_data:
     driver: local

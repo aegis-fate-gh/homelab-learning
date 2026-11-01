@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  atlantis:
+      image: ghcr.io/runatlantis/atlantis:latest
+      container_name: atlantis
+      restart: always
+      networks:
+        - proxy
+      ports:
+        - "4141:4141"
+      environment:
+        # Use Gitea/Forgejo integration flags
+        - ATLANTIS_GITEA_BASE_URL=${FORGEJO_HOSTNAME}
+        - ATLANTIS_GITEA_USER=atlantis
+        - ATLANTIS_GITEA_TOKEN=${FORGEJO_TOKEN}
+        - ATLANTIS_GITEA_WEBHOOK_SECRET=${FORGEJO_WEBHOOK_SECRET}
+        - ATLANTIS_REPO_ALLOWLIST=*
+        - ATLANTIS_ATLANTIS_URL=${ATLANTIS_URL}
+        - ATLANTIS_TF_DISTRIBUTION=opentofu
+        - ATLANTIS_DEFAULT_TF_VERSION=v1.13.2
+        - INFISICAL_AUTH_METHOD=universal
+        - INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=${INFISICAL_ID}
+        - INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=${INFISICAL_SECRET}
+        - INFISICAL_HOST=${INFISICAL_HOST}
+      volumes:
+        - atlantis_data:/home/atlantis
+
+volumes:
+  atlantis_data:
+    driver: local
+
+networks:
+  proxy:
+    external: true
