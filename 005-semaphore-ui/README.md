@@ -1,0 +1,1 @@
+Web based compose config: https://semaphoreui.com/install/docker/2_19

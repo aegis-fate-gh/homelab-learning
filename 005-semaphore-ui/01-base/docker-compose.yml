@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: semaphore-postgres
+    restart: unless-stopped
+    image: postgres
+    volumes:
+      - semaphore-postgres:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: semaphore
+    networks:
+      - semaphore
+  semaphore:
+    container_name: semaphore
+    restart: unless-stopped
+    ports:
+      - 3020:3000
+    image: semaphoreui/semaphore:latest
+    environment:
+      SEMAPHORE_DB_DIALECT: postgres
+      SEMAPHORE_DB_HOST: db
+      SEMAPHORE_DB_NAME: semaphore
+      SEMAPHORE_DB_USER: ${DB_USER}
+      SEMAPHORE_DB_PASS: ${DB_PASSWORD}
+      SEMAPHORE_ADMIN: ${SEMAPHORE_ADMIN_NAME}
+      SEMAPHORE_ADMIN_PASSWORD: ${SEMAPHORE_ADMIN_PASSWORD}
+      SEMAPHORE_ADMIN_NAME: ${SEMAPHORE_ADMIN_NAME}
+      SEMAPHORE_ADMIN_EMAIL: ${SEMAPHORE_ADMIN_EMAIL}
+      TZ: 'America/Chicago'
+    depends_on:
+      - db
+    networks:
+      - semaphore
+      - proxy
+
+networks:
+  semaphore:
+    external: false
+  proxy:
+    external: true
+
+volumes:
+  semaphore-postgres:
+    driver: local
