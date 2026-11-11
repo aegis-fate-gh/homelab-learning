@@ -38,16 +38,24 @@ talosctl apply-config --insecure --nodes 192.168.7.44,192.168.7.183,192.168.7.19
 ```
 
 
-Status as of 11/6/26
+Status as of 11/10/26
 - [x] Custom Image Created with qemu-agent - [Docs](https://docs.siderolabs.com/talos/v1.14/learn-more/image-factory)
 - [x] 6 VM's (3 Worker, 3 Control Plane) created on Andromeda via UI
 - [x] Base cluster in a healthy state
-- [ ] Build working cluster on Proxmox with OpenTofu 
-	- [ ] Create VM's
-		- [ ] Create Mac Addresses via IT Tools
-		- [ ] Create static IP's for those addresses in Unifi - [Docs](https://search.opentofu.org/provider/ubiquiti-community/unifi/latest)
-		- [ ] Create VM's - [Docs](https://search.opentofu.org/provider/bpg/proxmox/latest)
-	- [ ] Configure vm's and bootstrap working cluster - [Docs](https://search.opentofu.org/provider/siderolabs/talos/latest)
+- [x] Shutdown and delete cluster
+- [ ] Create working VM's with OpenTofu
+	- [x] Create Mac Addresses via IT Tools
+	- [x] Create static IP's for those addresses in Unifi - [Docs](https://search.opentofu.org/provider/ubiquiti-community/unifi/latest) - 01
+		- [x] Create user with permissions to only the network app
+	- [x] Create VM's in Proxmox - [Docs](https://search.opentofu.org/provider/bpg/proxmox/latest) - 02
+		- [x] Create new Proxmox Group
+		- [x] Create Proxmox user
+		- [x] Add the user to the desired role
+		- [x] Create API Token
+		- [x] Save token and token ID to Infisical
+		- [x] Create VM's
+- [ ] Build working Talos cluster on Proxmox with OpenTofu 
+	- [ ] Configure vm's and bootstrap working cluster - [Docs](https://search.opentofu.org/provider/siderolabs/talos/latest) - 03
 - [ ] Rebuild Cluster with no CNI, the Proxy Disabled, and kubePrism enabled (Enabled is the default) - [Docs ](https://docs.siderolabs.com/kubernetes-guides/cni/deploying-cilium#without-kube-proxy)
 - [ ] OpenTofu using Infisical Secrets - [Kubernetes Provider](https://search.opentofu.org/provider/opentofu/kubernetes/latest), [Helm Provider](https://search.opentofu.org/provider/opentofu/helm/latest)
 	- [ ] Cilium working for ingress, gateway API, and L2 Announcements
