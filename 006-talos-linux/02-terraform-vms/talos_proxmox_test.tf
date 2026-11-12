@@ -18,12 +18,14 @@ data "infisical_secrets" "proxmox_secrets" {
 }
 
 resource "proxmox_virtual_environment_vm" "talos_vms" {
-    for_each = { for idx, client in var.clients : idx => client }
+    for_each = { for c in var.clients : c.name => c }
     name = each.value.name
     vm_id = each.value.vm_id
     description = "Managed by OpenTofu"
 
     node_name = "pve-andromeda"
+
+    boot_order = ["virtio0", "ide2"]
 
     agent {
         enabled = true
@@ -47,17 +49,16 @@ resource "proxmox_virtual_environment_vm" "talos_vms" {
         datastore_id = "nvme-pool"
         interface = "virtio0"
         cache = "writethrough"
-        size = "20"
+        size = 20
         file_format = "raw" #ZFS only supports raw
-        ssd = "true"
+        iothread = true
+        discard = "on"
     }
-
-    scsi_hardware = "virtio-scsi-pci"
 
     efi_disk {
         datastore_id = "nvme-pool"
         type = "4m"
-        pre_enrolled_keys = "false"
+        pre_enrolled_keys = false
     }
     network_device {
         bridge = "vmbr0"
