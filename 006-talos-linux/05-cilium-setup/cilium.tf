@@ -35,7 +35,7 @@ resource "helm_release" "cilium" {
       ipam = { mode = "kubernetes" }
       kubeProxyReplacement = true
       gatewayAPI = { enabled = true }
-      k8sServiceHost = "localhost"   # KubePrism
+      k8sServiceHost = "localhost"
       k8sServicePort = 7445
       cgroup = {
       autoMount = { enabled = false }
@@ -45,9 +45,23 @@ resource "helm_release" "cilium" {
       capabilities = {
           ciliumAgent      = ["CHOWN","KILL","NET_ADMIN","NET_RAW","IPC_LOCK","SYS_ADMIN","SYS_RESOURCE","DAC_OVERRIDE","FOWNER","SETGID","SETUID"]
           cleanCiliumState = ["NET_ADMIN","SYS_ADMIN","SYS_RESOURCE"]
+        }
       }
+      ingressController = {
+      enabled          = true
+      loadbalancerMode = "shared"
+      default          = false
+      service = {
+        name        = "cilium-ingress"
+        type        = "LoadBalancer"
+        annotations = {
+          "lbipam.cilium.io/ips" = var.cilium_ingress_ip
+        }
+        }
       }
+      
       l2announcements = { enabled = true }
+      externalIPs          = { enabled = true }
       k8sClientRateLimit = { qps = 20, burst = 40 }  # recommended with L2 announcements
       hubble = { relay = { enabled = true }, ui = { enabled = true } }
     })]
@@ -82,7 +96,7 @@ resource "helm_release" "cert_manager" {
   version          = var.cert_manager_version
 
   values = [yamlencode({
-    crds   = { enabled = true }        # older chart versions use installCRDs = true
+    crds   = { enabled = true }
     config = {
       apiVersion = "controller.config.cert-manager.io/v1alpha1"
       kind       = "ControllerConfiguration"
@@ -121,3 +135,5 @@ resource "kubectl_manifest" "issuer" {
   })
   depends_on = [kubernetes_secret_v1.cloudflare_token]
 }
+
+

@@ -62,18 +62,11 @@ Status as of 11/20/26
 	- [x] Push Kubeconfig and talosconfig to infisical
 - [x] Rebuild Cluster with no CNI, the Proxy Disabled, and kubePrism enabled (Enabled is the default) - [Docs ](https://docs.siderolabs.com/kubernetes-guides/cni/deploying-cilium#without-kube-proxy) - 04
 	- [x] Backup VM's once completed for easy rollback
-- [ ] Terraform using Infisical Secrets - [Kubernetes Provider](https://search.opentofu.org/provider/opentofu/kubernetes/latest), [Helm Provider](https://search.opentofu.org/provider/opentofu/helm/latest)
+- [x] Terraform using Infisical Secrets - [Kubernetes Provider](https://search.opentofu.org/provider/opentofu/kubernetes/latest), [Helm Provider](https://search.opentofu.org/provider/opentofu/helm/latest)
 	- [x] Cilium working for ingress, gateway API, and L2 Announcements - 05
 		- [x] Set up Gateway API CRD's
 		- [x] Install Cilium via Helm
 		- [x] Install Cert-manager and ClusterIssuer for Cloudflare
-	- [ ] Install Snapshot and Volume Group CRD's
-	- [ ] Install Common Snapshot controller
-	- [ ] ArgoCD Install and setup via Helm
-		- [ ] HTTPS setup with static IP
-		- [ ] Connect to learning repo
-		- [ ] Connect to Forgejo
-		- [ ] Rolebinding setup 
 
 Once the Above is completed, the multi cluster test starts
 - [ ] Connect ArgoCD to second cluster - [Docs](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters)

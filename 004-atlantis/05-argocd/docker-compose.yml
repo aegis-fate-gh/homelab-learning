@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  atlantis:
+    image: ghcr.io/runatlantis/atlantis:latest
+    container_name: atlantis
+    restart: unless-stopped
+    depends_on:
+      - rustfs
+    networks:
+      - proxy
+    ports:
+      - "4141:4141"
+    environment:
+      - ATLANTIS_GITEA_BASE_URL=${FORGEJO_HOSTNAME}
+      - ATLANTIS_GITEA_USER=atlantis
+      - ATLANTIS_GITEA_TOKEN=${FORGEJO_TOKEN}
+      - ATLANTIS_GITEA_WEBHOOK_SECRET=${FORGEJO_WEBHOOK_SECRET}
+      - ATLANTIS_REPO_ALLOWLIST=*
+      - ATLANTIS_ATLANTIS_URL=${ATLANTIS_URL}
+      - ATLANTIS_TF_DISTRIBUTION=opentofu
+      - ATLANTIS_DEFAULT_TF_VERSION=v1.13.2
+      - ATLANTIS_AUTOMERGE=true
+      - INFISICAL_AUTH_METHOD=universal
+      - INFISICAL_UNIVERSAL_AUTH_CLIENT_ID=${INFISICAL_ID}
+      - INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET=${INFISICAL_SECRET}
+      - INFISICAL_HOST=${INFISICAL_HOST}
+      # Uncomment as credentials are ready
+      # - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      # - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # - AWS_ENDPOINT_URL_S3=http://rustfs:9000
+      # - ARGOCD_AUTH_TOKEN=${ARGOCD_AUTH_TOKEN}
+    volumes:
+      - atlantis_data:/home/atlantis
+
+  # grant the necessary permissions to RUSTFS volumes
+  rustfs_permissions_data:
+    image: alpine
+    container_name: rustfs_data_permissions
+    user: root
+    volumes:
+      - rustfs_data:/fix_path
+    command: chown -R 10001:10001 /fix_path
+
+  rustfs_permissions_log:
+    image: alpine
+    container_name: rustfs_log_permissions
+    user: root
+    volumes:
+      - rustfs_logs:/fix_path
+    command: chown -R 10001:10001 /fix_path
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs
+    depends_on:
+      rustfs_permissions_data:
+        condition: service_completed_successfully
+      rustfs_permissions_log:
+        condition: service_completed_successfully
+    environment:
+      - RUSTFS_ACCESS_KEY=${RUSTFS_ADMIN_KEY}
+      - RUSTFS_SECRET_KEY=${RUSTFS_ADMIN_SECRET}
+      - RUSTFS_ADDRESS=:9000
+      - RUSTFS_CONSOLE_ADDRESS=:9001
+      - RUSTFS_CONSOLE_ENABLE=true
+      - RUSTFS_OBS_LOGGER_LEVEL=error
+      - RUSTFS_OBS_LOG_DIRECTORY=/var/log/rustfs/
+    networks:
+      - proxy
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # web console
+    volumes:
+      - rustfs_data:/data
+      - rustfs_logs:/var/log/rustfs/
+
+volumes:
+  atlantis_data:
+    driver: local
+  rustfs_data:
+    driver: local
+  rustfs_logs:
+    driver: local
+
+networks:
+  proxy:
+    external: true

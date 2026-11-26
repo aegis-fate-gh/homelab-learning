@@ -8,6 +8,7 @@ locals {
     "gateway.networking.k8s.io_referencegrants.yaml",
     "gateway.networking.k8s.io_grpcroutes.yaml",
     "gateway.networking.k8s.io_tlsroutes.yaml",
+    "gateway.networking.k8s.io_backendtlspolicies.yaml",
     # Optional, new in Cilium 1.20 (uncomment if you want them):
     # "gateway.networking.k8s.io_listenersets.yaml",
     # "gateway.networking.k8s.io_udproutes.yaml",

@@ -11,7 +11,11 @@ terraform {
     http    = {
       source = "hashicorp/http"
       version = "~> 3.6"
-      }
+    }
+    unifi = {
+      source = "ubiquiti-community/unifi"
+      version = "0.65.0"
+    }
   }
   backend "s3" {
     bucket = "tfstate"
@@ -52,4 +56,11 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(local.cluster["certificate-authority-data"])
   client_certificate     = base64decode(local.user["client-certificate-data"])
   client_key             = base64decode(local.user["client-key-data"])
+}
+
+provider "unifi" {
+  username = data.infisical_secrets.unifi_secrets.secrets["username"].value
+  password = data.infisical_secrets.unifi_secrets.secrets["password"].value
+  api_url = "https://192.168.100.1"
+  allow_insecure = true
 }
